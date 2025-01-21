@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
 	Dialog,
 	DialogContent,
@@ -9,22 +9,40 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
+interface Todo {
+	id: number;
+	done: boolean;
+	text: string;
+	displayText: string;
+	isUrgent: boolean;
+	fullMatch: string;
+	start: number;
+	end: number;
+}
+
+interface Stats {
+	total: number;
+	completed: number;
+	pending: number;
+	urgent: number;
+	percentComplete: number;
+}
+
 const TodoFinder = () => {
-	const [text, setText] = useState(`Example todos:
+	const [text, setText] = useState<string>(`Example todos:
 - [ ] Task 1 not done
 - [x] Task 2 is done
 - [ ] Urgent task 3!
 - [x] Another urgent one!
 - [ ] Regular task 4
 - [x] Urgent completed!`);
-	const [dialogOpen, setDialogOpen] = useState(false);
-	const [todos, setTodos] = useState([]);
-	const [stats, setStats] = useState({
+	const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+	const [todos, setTodos] = useState<Todo[]>([]);
+	const [stats, setStats] = useState<Stats>({
 		total: 0,
 		completed: 0,
 		pending: 0,
@@ -32,7 +50,7 @@ const TodoFinder = () => {
 		percentComplete: 0,
 	});
 
-	const getProgressColor = (percent) => {
+	const getProgressColor = (percent: number): string => {
 		if (percent === 100) return "bg-green-500";
 		if (percent >= 75) return "bg-emerald-500";
 		if (percent >= 50) return "bg-blue-500";
@@ -40,7 +58,7 @@ const TodoFinder = () => {
 		return "bg-rose-500";
 	};
 
-	const updateStats = (todosArray) => {
+	const updateStats = (todosArray: Todo[]): void => {
 		const completed = todosArray.filter((todo) => todo.done).length;
 		const total = todosArray.length;
 		const urgent = todosArray.filter((todo) => todo.isUrgent).length;
@@ -53,7 +71,7 @@ const TodoFinder = () => {
 		});
 	};
 
-	const findTodos = (shouldOpenDialog = false) => {
+	const findTodos = (shouldOpenDialog = false): void => {
 		const todoPattern = /- \[([ x])\] (.*?)(?=\n|$)/g;
 		const matches = [...text.matchAll(todoPattern)];
 
@@ -85,7 +103,7 @@ const TodoFinder = () => {
 		findTodos();
 	}, []);
 
-	const toggleTodo = (todoId) => {
+	const toggleTodo = (todoId: number): void => {
 		const updatedTodos = todos.map((todo) => {
 			if (todo.id === todoId) {
 				const beforeText = text.substring(0, todo.start);
@@ -102,14 +120,13 @@ const TodoFinder = () => {
 		updateStats(updatedTodos);
 	};
 
-	const toggleUrgent = (todoId) => {
+	const toggleUrgent = (todoId: number): void => {
 		const updatedTodos = todos.map((todo) => {
 			if (todo.id === todoId) {
 				const beforeText = text.substring(0, todo.start);
-				const afterText = text.substring(todo.end).replace(/^!+/, ""); // Remove any accumulated ! at the start
+				const afterText = text.substring(todo.end).replace(/^!+/, "");
 				const hasNewline = afterText.startsWith("\n");
 				const newIsUrgent = !todo.isUrgent;
-				// Clean the display text by removing any trailing ! marks
 				const cleanDisplayText = todo.displayText.replace(/!+$/, "");
 				const newDisplayText = newIsUrgent
 					? `${cleanDisplayText}!`
@@ -121,7 +138,7 @@ const TodoFinder = () => {
 					...todo,
 					isUrgent: newIsUrgent,
 					text: newDisplayText,
-					displayText: todo.displayText,
+					displayText: cleanDisplayText,
 				};
 			}
 			return todo;
