@@ -1,3 +1,7 @@
+![GitHub stars](https://img.shields.io/github/stars/htlin222/react-md-todo-parser?style=flat-square)
+![Last commit](https://img.shields.io/github/last-commit/htlin222/react-md-todo-parser?style=flat-square)
+![License](https://img.shields.io/github/license/htlin222/react-md-todo-parser?style=flat-square)
+
 # TodoFinder Component
 
 A React component that parses and manages todo items in markdown format with a modern, interactive interface. The component provides real-time statistics, urgent task management, and code section highlighting.
